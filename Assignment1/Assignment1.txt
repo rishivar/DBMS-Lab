@@ -22,8 +22,9 @@ create table song(
 	a_id varchar2(10),
 	tr_no number,
 	s_name varchar2(20),
-	s_length number,
-	s_genre varchar2(10)
+	s_length number(20),
+	s_genre varchar2(10),
+	CONSTRAINT s_check CHECK (s_genre!='PAT' OR s_length > 7)
 );
 
 desc song;
@@ -79,11 +80,11 @@ insert into artist Values('5','Jonita','F');
 
 select * from artist;
 
-insert into song Values('1','11','Kadhal Rojave','400','LOV');
-insert into song Values('2','12','Nadhiye Nadhiye','400','REL');
-insert into song Values('3','13','Katre en vasal','500','PAT');
-insert into song Values('4','14','Kad0hale en Kadhale','400','PHI');
-insert into song Values('5','15','Munnal Kaadhali','600','REL');
+insert into song Values('1','11','Kadhal Rojave','4','LOV');
+insert into song Values('2','12','Nadhiye Nadhiye','3','REL');
+insert into song Values('3','13','Katre en vasal','8','PAT');
+insert into song Values('4','14','Kad0hale en Kadhale','9','PHI');
+insert into song Values('5','15','Munnal Kaadhali','3','REL');
 
 select * from song;
 
@@ -115,9 +116,6 @@ ADD UNIQUE (ar_name);
 ALTER TABLE album
 MODIFY n_tracks number NOT NULL;
 
-ALTER TABLE song
-    ADD CONSTRAINT s_check CHECK (LENGTHB(s_length) > 7 AND s_genre='PAT');
-
 ALTER TABLE album 
 	ADD CONSTRAINT yor CHECK ( yor > 1945 );
 
@@ -133,9 +131,6 @@ ADD CONSTRAINT album_pk PRIMARY KEY (a_id);
 ALTER TABLE artist
 ADD CONSTRAINT artist_pk PRIMARY KEY (ar_id);
 
-ALTER TABLE song
-ADD CONSTRAINT song_pk PRIMARY KEY (a_id, tr_no);
-
 ALTER TABLE sungby
 MODIFY R_DATE DATE NOT NULL;
 
@@ -148,6 +143,9 @@ ADD CONSTRAINT sungby_pk PRIMARY KEY (a_id, tr_no, ar_id);
 ALTER TABLE song
 ADD FOREIGN KEY (a_id) REFERENCES album(a_id);
 
+ALTER TABLE song
+ADD CONSTRAINT song_pk PRIMARY KEY (a_id, tr_no);
+
 ALTER TABLE album
 ADD FOREIGN KEY (m_id) REFERENCES musician(m_id);
 
@@ -159,3 +157,27 @@ ADD FOREIGN KEY (a_id, tr_no) REFERENCES song(a_id, tr_no);
 
 ALTER TABLE sungby
 ADD FOREIGN KEY (ar_id) REFERENCES artist(ar_id);
+
+
+insert into album Values('ar_1','Roja','2000','4','Marvel','ZAR','1');
+
+insert into song Values('1','11','Kadhal Rojave','4','POV');
+
+insert into artist Values('6','MSV','M');
+
+insert into album Values('ar_5','Jack','2004',NULL,'Stark','POP','5');
+
+insert into song Values('90','913','Katre pin vasal','3','PAT');
+
+insert into album Values('ar_7','Rojd','1900','9','UC','PAR','99');
+
+insert into studio Values('Marvelz','Madurai','8294750493');
+
+insert into sungby Values('7','3','15',NULL);
+
+drop table musician;
+drop table song;
+drop table artist;
+drop table sungby;
+drop table studio;
+drop table album;
