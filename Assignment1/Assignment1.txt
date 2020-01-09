@@ -4,6 +4,8 @@ create table musician(
 	birthplace varchar2(20)
 );
 
+desc musician;
+
 create table album(
 	a_id varchar2(10),
 	a_name varchar2(20),
@@ -14,6 +16,8 @@ create table album(
 	m_id varchar2(10)
 );
 
+desc album;
+
 create table song(
 	a_id varchar2(10),
 	tr_no number,
@@ -22,10 +26,14 @@ create table song(
 	s_genre varchar2(10)
 );
 
+desc song;
+
 create table artist(
 	ar_id varchar2(10),
 	ar_name varchar2(20)
 );
+
+desc artist;
 
 create table sungby(
 	a_id varchar2(10),
@@ -34,12 +42,66 @@ create table sungby(
 	r_date date
 );
 
+desc sungby;
+
 create table studio(
 	st_name varchar2(20),
 	st_address varchar2(30),
 	st_phone number
 );
 
+desc studio;
+
+insert into musician Values('1','Taylor','Chicago');
+insert into musician Values('2','Bylor','Florida');
+insert into musician Values('3','Caylor','Virginia');
+insert into musician Values('4','Daylor','Wiscounsin');
+insert into musician Values('5','Layla','Los Angeles');
+
+select * from musician;
+
+insert into album Values('ar_1','Roja','2000','4','Marvel','CAR','1');
+insert into album Values('ar_2','Jean','2001','5','Universal','POP','2');
+insert into album Values('ar_3','Buzz','2002','1','Marvel','DIV','3');
+insert into album Values('ar_4','Quiz','2003','9','DC','MOV','4');
+insert into album Values('ar_5','Jack','2004','2','Stark','POP','5');
+
+select * from album;
+
+ALTER TABLE artist
+ADD a_gender varchar2(5);
+
+insert into artist Values('1','Sid Sriram','M');
+insert into artist Values('2','SPB','M');
+insert into artist Values('3','MSV','F');
+insert into artist Values('4','ARR','M');
+insert into artist Values('5','Jonita','F');
+
+select * from artist;
+
+insert into song Values('1','11','Kadhal Rojave','400','LOV');
+insert into song Values('2','12','Nadhiye Nadhiye','400','REL');
+insert into song Values('3','13','Katre en vasal','500','PAT');
+insert into song Values('4','14','Kad0hale en Kadhale','400','PHI');
+insert into song Values('5','15','Munnal Kaadhali','600','REL');
+
+select * from song;
+
+insert into sungby Values('1','1','11','26-Jan-2000');
+insert into sungby Values('2','2','12','22-Mar-2001');
+insert into sungby Values('3','3','13','29-Jun-2002');
+insert into sungby Values('4','4','14','16-Jul-2003');
+insert into sungby Values('5','5','15','06-Feb-2004');
+
+select * from sungby;
+
+insert into studio Values('Marvel','Los Angeles','8294750493');
+insert into studio Values('Universal','Toronto','3443376764');
+insert into studio Values('DC','Wiscounsin','8994754049');
+insert into studio Values('Stark','Florida','7794735749');
+insert into studio Values('GHP','Delhi','8942744578');
+
+select * from studio;
 
 ALTER TABLE album
 ADD CONSTRAINT genre CHECK (genre='CAR' OR genre='DIV' OR genre='POP' OR genre='MOV');
@@ -54,53 +116,46 @@ ALTER TABLE album
 MODIFY n_tracks number NOT NULL;
 
 ALTER TABLE song
-    ADD CONSTRAINT s_length CHECK (LENGTHB(s_length) > 7 AND s_genre='PAT');
+    ADD CONSTRAINT s_check CHECK (LENGTHB(s_length) > 7 AND s_genre='PAT');
 
 ALTER TABLE album 
 	ADD CONSTRAINT yor CHECK ( yor > 1945 );
 
-ALTER TABLE artist
-ADD a_gender varchar2(5);
-
 ALTER TABLE studio
 ADD UNIQUE (st_phone);
 
-insert into musician Values('1','Taylor','Chicago');
-insert into musician Values('2','Bylor','Florida');
-insert into musician Values('3','Caylor','Virginia');
-insert into musician Values('4','Daylor','Wiscounsin');
-insert into musician Values('5','Layla','Los Angeles');
+ALTER TABLE musician
+ADD CONSTRAINT musician_pk PRIMARY KEY (m_id);
 
-insert into album Values('1','Roja','2000','4','Marvel','CAR','1');
-insert into album Values('2','Jean','2001','5','Universal','POP','2');
-insert into album Values('3','Buzz','2002','1','Marvel','DIV','3');
-insert into album Values('4','Quiz','2003','9','DC','MOV','4');
-insert into album Values('5','Jack','2004','2','Stark','POP','5');
+ALTER TABLE album
+ADD CONSTRAINT album_pk PRIMARY KEY (a_id);
 
-insert into artist Values('1','Sid Sriram','M');
-insert into artist Values('2','SPB','M');
-insert into artist Values('3','MSV','F');
-insert into artist Values('4','ARR','M');
-insert into artist Values('5','Jonita','F');
+ALTER TABLE artist
+ADD CONSTRAINT artist_pk PRIMARY KEY (ar_id);
 
-insert into song Values('1','11','Kadhal Rojave','400','LOV');
-insert into song Values('2','12','Nadhiye Nadhiye','400','REL');
-insert into song Values('3','13','Katre en vasal','500','PAT');
-insert into song Values('4','14','Kadhale en Kadhale','400','PHI');
-insert into song Values('5','15','Munnal Kaadhali','600','REL');
+ALTER TABLE song
+ADD CONSTRAINT song_pk PRIMARY KEY (a_id, tr_no);
 
-insert into sungby Values('1','1','11','26-Jan-2000');
-insert into sungby Values('2','2','12','22-Mar-2001');
-insert into sungby Values('3','3','13','29-Jun-2002');
-insert into sungby Values('4','4','14','16-Jul-2003');
-insert into sungby Values('5','5','15','06-Feb-2004');
+ALTER TABLE sungby
+MODIFY R_DATE DATE NOT NULL;
 
-insert into studio Values('Marvel','Los Angeles','8294750493');
-insert into studio Values('Universal','Toronto','3443376764');
-insert into studio Values('DC','Wiscounsin','8994754049');
-insert into studio Values('Stark','Florida','7794735749');
-insert into studio Values('GHP','Delhi','8942744578');
+ALTER TABLE studio
+ADD CONSTRAINT studio_pk PRIMARY KEY (st_name);
 
+ALTER TABLE sungby
+ADD CONSTRAINT sungby_pk PRIMARY KEY (a_id, tr_no, ar_id);
 
+ALTER TABLE song
+ADD FOREIGN KEY (a_id) REFERENCES album(a_id);
 
+ALTER TABLE album
+ADD FOREIGN KEY (m_id) REFERENCES musician(m_id);
 
+ALTER TABLE album
+ADD FOREIGN KEY (st_name) REFERENCES studio(st_name);
+
+ALTER TABLE sungby
+ADD FOREIGN KEY (a_id, tr_no) REFERENCES song(a_id, tr_no);
+
+ALTER TABLE sungby
+ADD FOREIGN KEY (ar_id) REFERENCES artist(ar_id);
