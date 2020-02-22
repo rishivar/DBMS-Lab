@@ -11,13 +11,11 @@ and f.rID=r.routeID
 and f.aid=a.aid
 and (a.type='Schweizer' or a.type='Piper') and (fs.dtime>=2000 and fs.dtime<=2100);
 
-
 REM:2. For all the routes, display the flight number, origin and destination airport, if a flight is
 REM:assigned for that route.
 
 select r.routeID,r.orig_airport,r.dest_airport,f.flightNo
-from routes r,flights f, fl_schedule fs where r.routeID=f.rID and f.flightNo = fs.flno;
-
+from routes r,flights f where r.routeID=f.rID;
 
 REM:3. For all aircraft with cruisingrange over 5,000 miles, find the name of the aircraft
 REM:and the average salary of all pilots certified for this aircraft.
@@ -29,7 +27,6 @@ and e.eid=c.eid
 and a.cruisingrange>5000
 group by a.aname;
 
-
 REM:4. Show the employee details such as id, name and salary who are not pilots and whose salary
 REM:is more than the average salary of pilots.
 
@@ -39,7 +36,6 @@ where c.eid is null
 and e.salary>(select avg(e1.salary) from employee e1 inner join certified c1
 on c1.eid=e1.eid);
 
-
 REM:5. Find the id and name of pilots who were certified to operate some aircrafts but at least one
 REM:of that aircraft is not scheduled from any routes.
 
@@ -48,7 +44,6 @@ inner join certified c on c.eid=e.eid
 left join flights f on f.aid=c.aid
 where f.rid is null
 group by (e.eid,e.ename);
-
 
 REM:6. Display the origin and destination of the flights having at least three departures with
 REM:maximum distance covered.
@@ -69,12 +64,10 @@ where (distance) in
 where (routeid = rid)
 );
 
-
-
 REM:7. Display name and salary of pilot whose salary is more than the average salary of any pilots
 REM:for each route other than flights originating from Madison airport.
 
-select e.ename,e.salary
+select distinct e.ename,e.salary
 from employee e,certified c
 where c.eid=e.eid and e.salary > ANY
 (
@@ -84,7 +77,6 @@ where c.eid=e.eid and e.salary > ANY
          and r.orig_airport!='Madison'
          group by r.routeID
 );
-
 
 REM:8. Display the flight number, aircraft type, source and destination airport of the aircraft
 REM:having maximum number of flights to Honolulu.
@@ -99,7 +91,6 @@ where f3.rID=r3.routeID and a3.aid=f3.aid and r3.dest_airport='Honolulu' group b
 having count(*)=
 (select max(c) as m from (select count(*) as c from flights f1,aircraft a1,routes r1
 where f1.rID=r1.routeID and a1.aid=f1.aid and r1.dest_airport='Honolulu' group by a1.aid)));
-
 
 REM:9. Display the pilot(s) who are certified exclusively to pilot all aircraft in a type.
  
@@ -133,7 +124,6 @@ where r1.routeId=f1.rid group by r1.orig_airport having count(*)=
 (select max(c) as m from (select count(*) as c from routes r,flights f
 where r.routeid=f.rid group by r.orig_airport)))));
 
-
 REM:11. Display the departure chart as follows:
 REM:flight number, departure(date,airport,time), destination airport, arrival time, aircraft name
 REM:for the flights from New York airport during 15 to 19th April 2005. Make sure that the route
@@ -150,7 +140,6 @@ REM:contains at least two flights in the above specified condition.
          from fl_schedule fs,flights f
          where f.rID=r.routeID and f.flightNo=fs.flno
  )>=2;
-
 
 REM:12. A customer wants to travel from Madison to New York with no more than two changes of
 REM:flight. List the flight numbers from Madison if the customer wants to arrive in New York by
@@ -176,10 +165,8 @@ where e1.eid in
 minus
 select c.eid from certified c);
 
-
 REM:14. Display the id and name of employee(s) who pilots the aircraft from Los Angeles and Detroit
 REM:airport.
-
 
 select distinct e.eid,e.ename from employee e,certified c,routes r,flights f,aircraft a
 where e.eid=c.eid and r.routeID=f.rID and f.aid=a.aid and c.aid=a.aid
